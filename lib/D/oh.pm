@@ -5,41 +5,40 @@ use strict;
 use warnings;
 
 use File::Basename;
-use File::Temp;
-use File::Spec::Functions 'catfile';
+use File::Spec::Functions qw(catfile tmpdir);
 
-use IO::Handle;
 use Carp;
+use IO::Handle;
+use Time::HiRes 'gettimeofday';
 
 our $VERSION = '1.00';
 
-#-----------------------------------------------------------------
-my $ERRFILE = catfile(($ENV{TMPDIR} || File::Temp->tmpdir), 'D\'oh');
+my $ERRFILE = catfile(($ENV{TMPDIR} || tmpdir), 'D\'oh');
 my $OUTFILE;
 
-#-----------------------------------------------------------------
 sub date {
-    my($fh)   = ($_[0] =~ /^STDOUT$/i ? 'STDOUT' : 'STDERR');
-    printf $fh "\n#===== %s [$$]: %s =====#\n",
-    	($0 =~ /([^$Sep]+)$/), scalar localtime;
-	1;
+    no strict 'refs';
+    my($fh) = ($_[0] && $_[0] =~ /^STDOUT$/i ? 'STDOUT' : 'STDERR');
+    my @gt = gettimeofday();
+    my @lt = gmtime($gt[0]);
+    (my $ss = sprintf('%.03f', '.' . $gt[1])) =~ s/^0\.//;
+
+    printf $fh "\n#===== %s [$$]: %04d-%02d-%02d %02d:%02d:%02d.%sZ =====#\n",
+        basename($0), $lt[5]+1900, $lt[4]+1, @lt[3,2,1,0], $ss;
 }
 
-#-----------------------------------------------------------------
 sub stdout {
-	$Out = $_[0] ? $_[0] : ($Out ? $Out : $Err);
-	open(STDOUT,">>$Out") || croak("D'oh can't open $Err: $!");
-	STDOUT->autoflush(1);
-	1;
+    $OUTFILE = $_[0] if $_[0];
+    open(STDOUT, '>>', $OUTFILE) or croak("D'oh can't open $OUTFILE: $!");
+    STDOUT->autoflush(1);
 }
-#-----------------------------------------------------------------
+
 sub stderr {
-	$Err = $_[0] ? $_[0] : $Err;
-	open(STDERR,">>$Err") || croak("D'oh can't open $Err: $!");
-	STDERR->autoflush(1);
-	1;
+    $ERRFILE = $_[0] if $_[0];
+    open(STDERR, '>>', $ERRFILE) or croak("D'oh can't open $ERRFILE: $!");
+    STDERR->autoflush(1);
 }
-#-----------------------------------------------------------------
+
 1;
 
 __END__

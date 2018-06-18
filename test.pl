@@ -1,70 +1,60 @@
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl test.pl'
+#!perl
+use strict;
+use warnings;
 
-######################### We start with some black magic to print on failure.
+use Test::More;
 
-# Change 1..1 below to 1..last_test_to_print .
-# (It may become useful if the test is moved to ./t subdirectory.)
+use_ok("D'oh");
 
-BEGIN { $| = 1; print "1..7\n"; }
-END {print "not ok 1\n" unless $loaded;}
-use D'oh;
-$loaded = 1;
-print "ok 1\n";
-
-######################### End of black magic.
-
-# Insert your test code below (better if it prints "ok 13"
-# (correspondingly "not ok 13") depending on the success of chunk 13
-# of the test code):
+# we use "#'#" to fix syntax highlighting for stupid parsers that do not understand ' as a package separator
 
 my($out, $err);
-my($outf, $errf) = ('./stdout_temp', './stderr_temp');
-{
-	open(SAVEOUT, ">&STDOUT");
-	open(SAVEERR, ">&STDERR");
+prep();
 
-	D'oh::stdout($outf);
-	D'oh::date('STDOUT');
-	print "bee!\n";
+sub prep {
+    my($outf, $errf) = ('./stdout_temp', './stderr_temp');
+    open(SAVEOUT, '>&STDOUT');
+    open(SAVEERR, '>&STDERR');
 
-	D'oh::stderr($errf);
-	D'oh::date();
-	warn "boo!";
+    D'oh::stdout($outf); #'#
+    D'oh::date('STDOUT'); #'#
+    print "bee!\n"; #'#
 
-	close(STDOUT);
-	close(STDERR);
+    D'oh::stderr($errf); #'#
+    D'oh::date(); #'#
+    warn "boo!";
 
-    open(STDOUT, ">&SAVEOUT");
-    open(STDERR, ">&SAVEERR");
+    close(STDOUT);
+    close(STDERR);
 
-	open(OLDOUT, $outf) || die $!;
-	open(OLDERR, $errf) || die $!;
+    open(STDOUT, '>&SAVEOUT');
+    open(STDERR, '>&SAVEERR');
 
-	while(<OLDOUT>) {$out .= $_}
-	while(<OLDERR>) {$err .= $_}
+    open(OLDOUT, $outf) or die $!;
+    open(OLDERR, $errf) or die $!;
 
-	close(OLDOUT);
-	close(OLDERR);
+    while(<OLDOUT>) {$out .= $_}
+    while(<OLDERR>) {$err .= $_}
+
+    close(OLDOUT);
+    close(OLDERR);
+
+    unlink $outf or die $!;
+    unlink $errf or die $!;
+
+    print $out, "\n", $err, "\n";
 }
 
 {
-	print_test(2, ($out =~ /#===/ && $out =~ /==#/));
-	print_test(3, ($err =~ /#===/ && $err =~ /==#/));
+	ok(($out =~ /#===/ && $out =~ /==#/), 'output looks right for STDOUT');
+    ok(($err =~ /#===/ && $err =~ /==#/), 'output looks right for STDERR');
 
-	print_test(4, ($out =~ /$$/));
-	print_test(5, ($err =~ /$$/));
+    ok(($out =~ /$$/), 'PID in STDOUT');
+    ok(($err =~ /$$/), 'PID in STDERR');
 
-	print_test(6, ($out =~ /bee!/));
-	print_test(7, ($err =~ /boo!/));
+    ok(($out =~ /bee!/), 'text in STDOUT');
+    ok(($err =~ /boo!/), 'text in STDERR');
 }
 
-{
-	print $out, "\n", $err, "\n";
-	unlink $outf || die $!;
-	unlink $errf || die $!;
-}
+done_testing();
 
-sub print_test {
-	printf "%s %s\n", ($_[1] ? 'ok' : 'not ok'), $_[0];
-}
