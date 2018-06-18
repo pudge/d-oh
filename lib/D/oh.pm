@@ -9,7 +9,7 @@ use Carp;
 @ISA = qw(Exporter);
 @EXPORT = ();
 @EXPORT_OK = qw(sortFile);
-$VERSION = sprintf("%d.%02d", q$Revision: 0.05 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.00 $ =~ /(\d+)\.(\d+)/);
 
 #-----------------------------------------------------------------
 my($Sep) = (($^O eq 'MacOS') ? ':' : '/');
