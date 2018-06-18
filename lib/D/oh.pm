@@ -1,28 +1,30 @@
-#!perl -w
+#!perl
 package D::oh;
-use vars qw(@ISA @EXPORT_OK @EXPORT $VERSION);
+
 use strict;
-use Exporter;
+use warnings;
+
 use File::Basename;
+use File::Temp;
+use File::Spec::Functions 'catfile';
+
 use IO::Handle;
 use Carp;
-@ISA = qw(Exporter);
-@EXPORT = ();
-@EXPORT_OK = qw(sortFile);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.00 $ =~ /(\d+)\.(\d+)/);
+
+our $VERSION = '1.00';
 
 #-----------------------------------------------------------------
-my($Sep) = (($^O eq 'MacOS') ? ':' : '/');
-my($Err) = (($^O eq 'MacOS') ? "$ENV{TMPDIR}D\'oh" : '/tmp/D\'oh');
-my($Out) = undef;
+my $ERRFILE = catfile(($ENV{TMPDIR} || File::Temp->tmpdir), 'D\'oh');
+my $OUTFILE;
+
 #-----------------------------------------------------------------
 sub date {
-    no strict 'refs';
     my($fh)   = ($_[0] =~ /^STDOUT$/i ? 'STDOUT' : 'STDERR');
     printf $fh "\n#===== %s [$$]: %s =====#\n",
     	($0 =~ /([^$Sep]+)$/), scalar localtime;
 	1;
 }
+
 #-----------------------------------------------------------------
 sub stdout {
 	$Out = $_[0] ? $_[0] : ($Out ? $Out : $Err);
@@ -79,24 +81,17 @@ D'oh - Debug module
 
 The module, when used, prints all C<STDERR> (or C<STDOUT>) to a given file, which is by default C</tmp/D'oh>.
 
-=head1 BUGS
-
-Also, multiple scripts can write simultaneously to the same error file, making it really messy.  If you don't like this, then select different files for each script or whatever.
-
-=head1 Mac OS
-
-Mac OS does not like to have multiple opens to the same file.  Use different files.  The default directory for the files is C<$ENV{TMPDIR}> in MacPerl, not C</tmp>.
-
 =head1 AUTHOR
 
 Chris Nandor, pudge@pobox.com, http://pudge.net/
 
-Copyright (c) 1998 Chris Nandor.  All rights reserved.  This program is free
+Copyright (c) 1998-2018 Chris Nandor.  All rights reserved.  This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
-=head1 VERSION
+=head1 VERSION HISTORY
 
-Version 0.05 (02 February 1998)
+Version 1.00 (2018-06-18)
+Version 0.05 (1998-02-02)
 
 =cut
