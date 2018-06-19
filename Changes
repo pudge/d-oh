@@ -1,5 +1,8 @@
 Revision history for Perl module D'oh
 
+1.01 2018-06-19T06:15:01Z
+	Fix regexes in tests for unescaped braces
+
 1.00 2018-06-19T03:51:23Z
 	First release in 20 years!
 	Added name-your-own-debug-function feature
