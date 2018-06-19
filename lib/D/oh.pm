@@ -15,7 +15,7 @@ use Time::HiRes 'gettimeofday';
 use parent 'Exporter';
 our @EXPORT_OK;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 our $ERRFILE = catfile(($ENV{TMPDIR} || tmpdir), 'D\'oh');
 our $OUTFILE;

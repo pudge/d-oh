@@ -20,8 +20,8 @@ like($out, qr/^bee!$/m, 'text in STDOUT');
 like($err, qr/^boo! at t\/d-oh\.t line \d+\.$/m, 'text in STDERR');
 
 like($err, qr/^\["I STINK"\]$/m, 'string data in STDERR');
-like($err, qr/^{"YOU":"STINK"}$/m, 'hash data in STDERR');
-like($err, qr/^\[{"YOU":"STINK"},"I STINK"\]$/m, 'list data in STDERR');
+like($err, qr/^\{"YOU":"STINK"\}$/m, 'hash data in STDERR');
+like($err, qr/^\[\{"YOU":"STINK"\},"I STINK"\]$/m, 'list data in STDERR');
 
 done_testing();
 
