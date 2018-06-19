@@ -1,5 +1,9 @@
+.releaserc
+Changes
+CONTRIBUTORS
 lib/D/oh.pm
 Makefile.PL
 MANIFEST
+MANIFEST.SKIP
 README.md
 t/d-oh.t
