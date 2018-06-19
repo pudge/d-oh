@@ -2,4 +2,4 @@ lib/D/oh.pm
 Makefile.PL
 MANIFEST
 README.md
-test.pl
+t/d-oh.t
